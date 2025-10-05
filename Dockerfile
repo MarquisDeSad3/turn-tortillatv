@@ -16,8 +16,7 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # Expone puertos TURN y el de Render healthcheck
-EXPOSE 3478 3478/udp 443/tcp 10000
-EXPOSE 3478 443 10000
+EXPOSE 3478 10000
 
 # Ejecuta el script
 CMD ["/start.sh"]
