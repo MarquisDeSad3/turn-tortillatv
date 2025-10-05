@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: turn-tortillatv
+    env: docker
+    plan: standard    # puedes subir a pro/pro+ si lo necesitas
+    autoDeploy: true
+    envVars:
+      - key: TURN_USER
+        value: tortilla
+      - key: TURN_PASS
+        value: Cl4uD1@2025
+      - key: TURN_REALM
+        value: tortillatv.com
+      - key: PORT
+        value: 10000
+    healthCheckPath: /
+    regions:
+      - oregon
