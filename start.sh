@@ -1,24 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-# Simple HTTP server on $PORT so Render sees the service as healthy
-# It serves a static OK page.
-mkdir -p /health
-echo "OK" > /health/index.html
-python3 -m http.server "${PORT:-10000}" --directory /health &
+# Render necesita algo que escuche en un puerto HTTP para healthcheck
+python3 -m http.server ${PORT:-10000} &
 
-# Launch coturn in TCP on 443 (no UDP). Uses static snakeoil certs provided by base image if needed,
-# but we'll default to non-TLS (turn:), so certs are not required.
-exec turnserver \
-  --listening-port 443 \
-  --no-udp \
+echo "Starting TURN server on port 3478 (TCP, no UDP)..."
+
+turnserver \
+  --listening-port=3478 \
+  --listening-ip=0.0.0.0 \
+  --realm=${TURN_REALM:-tortillatv.com} \
+  --user=${TURN_USER:-tortilla}:${TURN_PASS:-Cl4uD1@2025} \
+  --no-cli \
   --fingerprint \
   --lt-cred-mech \
-  --user "${TURN_USER}:${TURN_PASS}" \
-  --realm "${TURN_REALM}" \
-  --no-cli \
-  --no-loopback-peers \
-  --no-multicast-peers \
-  --no-tls \
-  --min-port 49160 --max-port 49200 \
-  --log-file stdout
+  --no-udp \
+  --log-file=stdout
